@@ -63,7 +63,7 @@ pipeline {
                         set EXPECTED=%%C
 
                         rem Exécuter sum.py dans le conteneur avec les nombres
-                        for /F %%R in ('docker exec %CONTAINER_ID% python /app/sum.py !NUM1! !NUM2!') do (
+                        for /F %%R in ('docker exec %CONTAINER_IDRUN% python /app/sum.py !NUM1! !NUM2!') do (
                             set RESULT=%%R
                         )
 
@@ -85,8 +85,8 @@ pipeline {
             steps {
                 echo 'Stopping and removing the container...'
                 bat '''
-                    docker stop %CONTAINER_ID%
-                    docker rm %CONTAINER_ID%
+                    docker stop %CONTAINER_IDRUN%
+                    docker rm %CONTAINER_IDRUN%
                 '''
 
             }
