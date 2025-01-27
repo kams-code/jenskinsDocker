@@ -32,9 +32,9 @@ pipeline {
                     //     script: "docker run -dit python-sum",
                     //     returnStdout: true
                     // ).trim()
-                    env.CONTAINER_ID = bat(script: 'docker run -dit python-sum', returnStdout: true).trim()
-                    echo "Container ID: ${env.CONTAINER_ID}"
-                    echo "Container ID: ${CONTAINER_ID}"
+                    env.CONTAINER_ID_RUN = bat(script: 'docker run -dit python-sum', returnStdout: true).trim()
+                    echo "Container ID: ${env.CONTAINER_ID_RUN}"
+                    echo "Container ID: ${CONTAINER_ID_RUN}"
                 }
             }
         }
@@ -46,7 +46,7 @@ pipeline {
 
                 // Copier le fichier de test dans le conteneur
                 bat '''
-                    docker cp "%SUM_PY_PATH%" "%CONTAINER_ID%:/app/sum.py"
+                    docker cp "%SUM_PY_PATH%" "%CONTAINER_ID_RUN%:/app/sum.py"
                 '''
 
 
@@ -61,7 +61,7 @@ pipeline {
                         set EXPECTED=%%C
 
                         rem Exécuter sum.py dans le conteneur avec les nombres
-                        for /F %%R in ('docker exec %CONTAINER_ID% python /app/sum.py !NUM1! !NUM2!') do (
+                        for /F %%R in ('docker exec %CONTAINER_ID_RUN% python /app/sum.py !NUM1! !NUM2!') do (
                             set RESULT=%%R
                         )
 
@@ -83,8 +83,8 @@ pipeline {
             steps {
                 echo 'Stopping and removing the container...'
                     bat '''
-                docker stop %CONTAINER_ID%
-                docker rm %CONTAINER_ID%
+                docker stop %CONTAINER_ID_RUN%
+                docker rm %CONTAINER_ID_RUN%
             '''
 
             }
