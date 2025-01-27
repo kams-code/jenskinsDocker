@@ -17,7 +17,7 @@ pipeline {
                 echo 'Building the Docker image...'
                 echo "${DIR_PATH}"
                 sh '''
-                docker build -t python-sum ${DIR_PATH}
+                docker build -t python-sum .
                 '''
             }
         }
