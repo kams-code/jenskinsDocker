@@ -6,7 +6,7 @@ pipeline {
     environment {
         CONTAINER_ID = 'e67d4f2089ee55495c913635ecba060056f9c864aec8ddcdd2a8e721c70dce13' // ID du conteneur sera stocké ici
         SUM_PY_PATH = 'sum.py' // Chemin vers le script sum.py sur la machine locale
-        DIR_PATH = '/jenskinsDocker/' // Chemin vers le répertoire contenant le Dockerfile
+        DIR_PATH = '.' // Chemin vers le répertoire contenant le Dockerfile
     }
 
     stages {
@@ -28,7 +28,7 @@ pipeline {
                 echo 'Running the Docker container...'
                 script {
                     // Lancer le conteneur en mode détaché
-                    CONTAINER_ID = sh(
+                    CONTAINER_ID = bat(
                         script: "docker run -dit python-sum",
                         returnStdout: true
                     ).trim()
@@ -43,12 +43,12 @@ pipeline {
                 echo 'Running tests inside the container...'
 
                 // Copier le fichier de test dans le conteneur
-                sh '''
+                bat '''
                 docker cp ${SUM_PY_PATH} ${CONTAINER_ID}:/app/sum.py
                 '''
 
                 // Tester des paires de nombres depuis le fichier de test
-                sh '''
+                bat '''
                 while read line; do
                     NUM1=$(echo $line | cut -d ' ' -f 1)
                     NUM2=$(echo $line | cut -d ' ' -f 2)
@@ -73,7 +73,7 @@ pipeline {
         stage('Cleanup ') {
             steps {
                 echo 'Stopping and removing the container...'
-                sh '''
+                bat '''
                 docker stop ${CONTAINER_ID}
                 docker rm ${CONTAINER_ID}
                 '''
