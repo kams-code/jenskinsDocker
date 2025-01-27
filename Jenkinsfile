@@ -6,7 +6,7 @@ pipeline {
     environment {
         CONTAINER_ID = 'e67d4f2089ee55495c913635ecba060056f9c864aec8ddcdd2a8e721c70dce13' // ID du conteneur sera stocké ici
         SUM_PY_PATH = 'sum.py' // Chemin vers le script sum.py sur la machine locale
-        DIR_PATH = '/' // Chemin vers le répertoire contenant le Dockerfile
+        DIR_PATH = '' // Chemin vers le répertoire contenant le Dockerfile
     }
 
     stages {
