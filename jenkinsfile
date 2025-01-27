@@ -67,8 +67,8 @@ pipeline {
             }
         }
 
-        // Étape 4 : Nettoyage
-        stage('Cleanup') {
+        // Étape 4 : Nettoyage .
+        stage('Cleanup ') {
             steps {
                 echo 'Stopping and removing the container...'
                 sh '''
