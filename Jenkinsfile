@@ -44,8 +44,9 @@ pipeline {
 
                 // Copier le fichier de test dans le conteneur
                 bat '''
-                docker cp ${SUM_PY_PATH} ${CONTAINER_ID}:/app/sum.py
+                    docker cp "%SUM_PY_PATH%" "%CONTAINER_ID%:/app/sum.py"
                 '''
+
 
                 // Tester des paires de nombres depuis le fichier de test
                 bat '''
