@@ -12,8 +12,10 @@ pipeline {
     stages {
         // Étape 1 : Construction de l'image Docker
         stage('Build Docker Image') {
+
             steps {
                 echo 'Building the Docker image...'
+                echo "".${DIR_PATH}
                 sh '''
                 docker build -t python-sum ${DIR_PATH}
                 '''
