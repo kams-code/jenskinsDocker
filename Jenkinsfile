@@ -50,23 +50,29 @@ pipeline {
 
                 // Tester des paires de nombres depuis le fichier de test
                 bat '''
-                while read line; do
-                    NUM1=$(echo $line | cut -d ' ' -f 1)
-                    NUM2=$(echo $line | cut -d ' ' -f 2)
-                    EXPECTED=$(echo $line | cut -d ' ' -f 3)
+                    @echo off
+                    setlocal enabledelayedexpansion
 
-                    # Exécuter sum.py dans le conteneur avec les nombres
-                    RESULT=$(docker exec ${CONTAINER_ID} python /app/sum.py $NUM1 $NUM2)
+                    for /F "tokens=1,2,3 delims= " %%A in (test_variables.txt) do (
+                        set NUM1=%%A
+                        set NUM2=%%B
+                        set EXPECTED=%%C
 
-                    # Vérifier si le résultat correspond à la valeur attendue
-                    if [ "$RESULT" -ne "$EXPECTED" ]; then
-                        echo "Test failed for inputs $NUM1, $NUM2: Expected $EXPECTED, but got $RESULT"
-                        exit 1
-                    else
-                        echo "Test passed for inputs $NUM1, $NUM2"
-                    fi
-                done < test_variables.txt
+                        rem Exécuter sum.py dans le conteneur avec les nombres
+                        for /F %%R in ('docker exec %CONTAINER_ID% python /app/sum.py !NUM1! !NUM2!') do (
+                            set RESULT=%%R
+                        )
+
+                        rem Vérifier si le résultat correspond à la valeur attendue
+                        if !RESULT! NEQ !EXPECTED! (
+                            echo Test failed for inputs !NUM1!, !NUM2!: Expected !EXPECTED!, but got !RESULT!
+                            exit /b 1
+                        ) else (
+                            echo Test passed for inputs !NUM1!, !NUM2!
+                        )
+                    )
                 '''
+
             }
         }
 
