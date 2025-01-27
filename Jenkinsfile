@@ -28,10 +28,12 @@ pipeline {
                 echo 'Running the Docker container...'
                 script {
                     // Lancer le conteneur en mode détaché
-                    CONTAINER_ID = bat(
-                        script: "docker run -dit python-sum",
-                        returnStdout: true
-                    ).trim()
+                    // CONTAINER_ID = bat(
+                    //     script: "docker run -dit python-sum",
+                    //     returnStdout: true
+                    // ).trim()
+                    env.CONTAINER_ID = bat(script: 'docker run -dit python-sum', returnStdout: true).trim()
+                    echo "Container ID: ${env.CONTAINER_ID}"
                     echo "Container ID: ${CONTAINER_ID}"
                 }
             }
@@ -42,16 +44,12 @@ pipeline {
             steps {
                 echo 'Running tests inside the container...'
 
-                CONTAINER_IDRUN = bat(
-                    script: "docker run -dit python-sum",
-                    returnStdout: true
-                ).trim()
-
                 // Copier le fichier de test dans le conteneur
                 bat '''
-                    docker cp "%SUM_PY_PATH%" "%CONTAINER_IDRUN%:/app/sum.py"
+                    docker cp "%SUM_PY_PATH%" "%CONTAINER_ID%:/app/sum.py"
                 '''
-            
+
+
                 // Tester des paires de nombres depuis le fichier de test
                 bat '''
                     @echo off
@@ -63,7 +61,7 @@ pipeline {
                         set EXPECTED=%%C
 
                         rem Exécuter sum.py dans le conteneur avec les nombres
-                        for /F %%R in ('docker exec %CONTAINER_IDRUN% python /app/sum.py !NUM1! !NUM2!') do (
+                        for /F %%R in ('docker exec %CONTAINER_ID% python /app/sum.py !NUM1! !NUM2!') do (
                             set RESULT=%%R
                         )
 
@@ -84,10 +82,10 @@ pipeline {
         stage('Cleanup ') {
             steps {
                 echo 'Stopping and removing the container...'
-                bat '''
-                    docker stop %CONTAINER_IDRUN%
-                    docker rm %CONTAINER_IDRUN%
-                '''
+                    bat '''
+                docker stop %CONTAINER_ID%
+                docker rm %CONTAINER_ID%
+            '''
 
             }
         }
