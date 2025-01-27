@@ -42,12 +42,16 @@ pipeline {
             steps {
                 echo 'Running tests inside the container...'
 
+                CONTAINER_IDRUN = bat(
+                    script: "docker run -dit python-sum",
+                    returnStdout: true
+                ).trim()
+
                 // Copier le fichier de test dans le conteneur
                 bat '''
-                    docker cp "%SUM_PY_PATH%" "%CONTAINER_ID%:/app/sum.py"
+                    docker cp "%SUM_PY_PATH%" "%CONTAINER_IDRUN%:/app/sum.py"
                 '''
-
-
+            
                 // Tester des paires de nombres depuis le fichier de test
                 bat '''
                     @echo off
@@ -81,9 +85,10 @@ pipeline {
             steps {
                 echo 'Stopping and removing the container...'
                 bat '''
-                docker stop ${CONTAINER_ID}
-                docker rm ${CONTAINER_ID}
+                    docker stop %CONTAINER_ID%
+                    docker rm %CONTAINER_ID%
                 '''
+
             }
         }
     }
