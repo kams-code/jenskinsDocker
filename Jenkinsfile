@@ -43,13 +43,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 echo 'Running tests inside the container...'
-
                 // Copier le fichier de test dans le conteneur
                 bat '''
                     docker cp "%SUM_PY_PATH%" "%CONTAINER_ID_RUN%:/app/sum.py"
                 '''
-
-
                 // Tester des paires de nombres depuis le fichier de test
                 bat '''
                     @echo off
@@ -89,5 +86,23 @@ pipeline {
 
             }
         }
+
+        //Etape5: Dockerhub
+        stage('Deploy to DockerHub') {
+            steps {
+                script {
+                    // Connexion à DockerHub
+                    withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKER_PASSWORD')]) {
+                        bat "echo \$DOCKER_PASSWORD | docker login -u monutilisateur --password-stdin"
+                    }
+                    
+                    // Tag de l'image
+                    bat "docker tag python-sum:latest"
+                    
+                    // Push de l'image
+                    bat "docker push python-sum:latest"
+                    
+                }
+            }
     }
 }
