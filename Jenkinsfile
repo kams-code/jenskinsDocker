@@ -97,12 +97,13 @@ pipeline {
                     }
                     
                     // Tag de l'image
-                    bat "docker tag python-sum:latest"
+                    bat "docker tag ladydaina24/python-sum:latest"
                     
                     // Push de l'image
-                    bat "docker push python-sum:latest"
+                    bat "docker push ladydaina24/python-sum:latest"
                     
                 }
             }
+        }    
     }
 }
