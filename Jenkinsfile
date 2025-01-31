@@ -93,7 +93,7 @@ pipeline {
                 script {
                     // Connexion à DockerHub
                     withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKER_PASSWORD')]) {
-                        bat "echo \$DOCKER_PASSWORD | docker login -u monutilisateur --password-stdin"
+                        bat "echo \$DOCKER_PASSWORD | docker login -u ladydaina24 --@Dk693040533-stdin"
                     }
                     
                     // Tag de l'image
